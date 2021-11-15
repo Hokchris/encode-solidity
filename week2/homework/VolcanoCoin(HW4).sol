@@ -49,13 +49,18 @@ contract VolcanoCoin {
         balance[_recipientAddress] += _amount;
         balance[msg.sender] -= _amount;
         
+        payments[msg.sender].push(
+            Payment(
+                {amount: _amount, recipientAddress: _recipientAddress}
+            )
+        );
         emit Transfer(_amount, _recipientAddress);
     }
     
+    // returns concatenated strings instead of array of Payment(s)
     function getPayments(address _address) public view returns (Payment[] memory) {
         return payments[_address];
     }
-    
-    
+
 }
 
