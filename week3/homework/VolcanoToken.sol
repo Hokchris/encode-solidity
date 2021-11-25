@@ -17,25 +17,25 @@ contract VolcanoToken is ERC721("VolcanoToken", "VOLT"), Ownable {
     
     mapping(address => Metadata[]) public tokenOwnership;
     
-    function mintToken(address _user) public {
+    function mintToken(string memory _tokenURI) public {
         
-        _safeMint(_user, tokenId);
+        _safeMint(msg.sender, tokenId);
         
         Metadata memory tokenMetadata = Metadata(
                 {
                 timestamp: block.timestamp,
                 tokenId: tokenId,
-                tokenURI: "testURI"
+                tokenURI: _tokenURI
                 }
             );
         
-        tokenOwnership[_user].push(tokenMetadata);
+        tokenOwnership[msg.sender].push(tokenMetadata);
         tokenId += 1;
         
     }
     
     function burnToken(uint _tokenId) public {
-        require(msg.sender==owner(), "Only owner can burn their tokens.");
+        require(msg.sender==ownerOf(_tokenId), "Only owner can burn their tokens.");
         removeToken(_tokenId);
         _burn(_tokenId);
     }
@@ -45,14 +45,19 @@ contract VolcanoToken is ERC721("VolcanoToken", "VOLT"), Ownable {
         
         for (uint i=0; i < userTokens.length; i++) {
             if (_tokenId == userTokens[i].tokenId) {
-                delete userTokens[i];
+                delete tokenOwnership[msg.sender][i];
             }
         }
     
     }
     
-    function tokURI(uint _tokenId) public returns (string memory) {
+    function tokenURI(uint _tokenId) public view override returns (string memory) {
         require(_exists(_tokenId), "Invalid token ID");
+        return "a";
+    }
+    
+    function test(address _addr) public view returns (Metadata[] memory) {
+        return tokenOwnership[_addr];
     }
     
 }
