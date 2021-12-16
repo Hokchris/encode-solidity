@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const ipfsAPI = require("../public/javascript/ipfsAPI");
+// const ipfsAPI = require("../public/javascript/ipfsAPI");
 
 const app = express();
 

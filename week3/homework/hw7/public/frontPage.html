@@ -10,7 +10,39 @@
   <body>
     <h1>IPFS data storage and retrieval</h1>
     <p>Enter data to be stored on IPFS</p>
-    <textarea name="ipfs-input-text" id="input-text"></textarea>
-    <button id="store-data">Store data</button>
+    <textarea name="input-text" id="input-text"></textarea>
+
+    <br />
+    <button id="store-data" type="button">Store text</button>
+
+    <br />
+    <p>Choose image to upload:</p>
+    <input type="file" name="file" id="file" />
+    <button id="add-image" type="button">Store image</button>
+
+    <br />
+    <p>Output from IPFS:</p>
+    <textarea
+      placeholder="Awaiting response form IPFS"
+      name="output-text"
+      id="output-text"
+      readonly="true"
+    >
+    </textarea>
+
+    <br />
+    <p>IPFS node request:</p>
+    <input
+      placeholder="Input CID to search."
+      type="text"
+      id="ipfs-request"
+      name="ipfs-request"
+    />
+
+    <br />
+    <button id="get-data" type="button">Get data from IPFS.</button>
+    <button id="get-image" type="button">Get image from IPFS.</button>
+    <br />
+    <img id="ipfs-image" src="" />
   </body>
 </html>
