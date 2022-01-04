@@ -5,6 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://bundle.run/buffer@6.0.3"></script>
+
+    <script src="./javascript/web3Bridge.js"></script>
+    <script src="./javascript/ajax.js"></script>
   </head>
 
   <body>
@@ -13,17 +19,18 @@
     <textarea name="input-text" id="input-text"></textarea>
 
     <br />
-    <button id="store-data" type="button">Store text</button>
+    <button id="add-data" type="button">Store text</button>
 
     <br />
     <p>Choose image to upload:</p>
     <input type="file" name="file" id="file" />
-    <button id="add-image" type="button">Store image</button>
+    <button id="add-file" type="button">Add file to IPFS</button>
+    <p><b>https://ipfs.io/ipfs/</b></p>
 
     <br />
     <p>Output from IPFS:</p>
     <textarea
-      placeholder="Awaiting response form IPFS"
+      placeholder="Awaiting response from IPFS"
       name="output-text"
       id="output-text"
       readonly="true"
