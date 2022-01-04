@@ -78,12 +78,73 @@ describe("Volcano Coin", () => {
 
     expect(allowanceBefore - allowanceAfter).to.be.equal(decreaseAmount);
   });
-  it("emits an event when increasing allowance", async () => {});
-  it("revets decreaseAllowance when trying decrease below 0", async () => {});
+  it("emits an event when increasing allowance", async () => {
+    let tx = await volcanoContract.increaseAllowance(addr1.address, 100);
+    await expect(tx).to.emit(volcanoContract, "Approval");
+  });
+  it("revets decreaseAllowance when trying decrease below 0", async () => {
+    await expectRevert(
+      volcanoContract.connect(addr1).decreaseAllowance(addr2.address, 100),
+      "ERC20: decreased allowance below 0"
+    );
+  });
 
-  it("updates balances on successful transfer from owner to addr1", async () => {});
-  it("revets transfer when sender does not have enough balance", async () => {});
+  it("updates balances on successful transfer from owner to addr1", async () => {
+    let trasferAmount = 100;
+    let o = owner.address;
+    let a1 = addr1.address;
 
-  it("reverts transferFrom addr1 to addr2 called by the owner without setting allowance", async () => {});
-  it("updates balances after transferFrom addr1 to addr2 called by the owner", async () => {});
+    let ownerBalanceBefore = await volcanoContract.balanceOf(o);
+    let address1BalanceBefore = await volcanoContract.balanceOf(a1);
+    let tx = await volcanoContract.transfer(a1, transferAmount);
+    await tx.wait();
+
+    let ownerBalanceAfter = await volcanoContract.balanceOf(o);
+    let address1BalanceAfter = await volcanoContract.balanceOf(a1);
+
+    expect(ownerBalanceBefore - ownerBalanceAfter).to.equal(transferAmount);
+    expect(address1BalanceBefore - address1BalanceAfter).to.equal(
+      transferAmount
+    );
+  });
+  it("revets transfer when sender does not have enough balance", async () => {
+    await expect(
+      volcanoContract.connect(addr1).transfer(addr2.address, 100000)
+    ).to.be.revertedWith("ERC20: trasfer amount exceeds balance");
+  });
+
+  it("reverts transferFrom addr1 to addr2 called by the owner without setting allowance", async () => {
+    await expect(
+      volcanoContract.transferFrom(addr1.address, addr2.address, 100000)
+    ).to.be.revertedWith("ERC20: transfer amount exceeds balance");
+  });
+  it("updates balances after transferFrom addr1 to addr2 called by the owner", async () => {
+    let transferAmount = 10000;
+    let o = owner.address;
+    let a1 = addr1.address;
+    let a2 = addr2.address;
+
+    let tx1 = await volcanoContract.transfer(a1, transferAmount);
+    await tx.wait();
+
+    let address1BalanceBefore = await volcanoContract.balanceOf(a1);
+    let address2BalanceBefore = await volcanoContract.balanceOf(a2);
+    let tx2 = await volcanoContract
+      .connect(addr1)
+      .increaseAllowance(o, transferAmount);
+    await tx2.wait();
+
+    let tx3 = await volcanoContract.transferFrom(a1, a2, transferAmount);
+    await tx3.wait();
+
+    let address1BalanceAfter = await volcanoContract.balanceOf(a1);
+    let address2BalanceAfter = await volcanoContract.balanceOf(a2);
+
+    expect(address1BalanceBefore - address1BalanceAfter).to.equal(
+      transferAmount
+    );
+    expect(address2BalanceAfter - address2BalanceBefore).to.equal(
+      transferValue
+    );
+  });
 });
