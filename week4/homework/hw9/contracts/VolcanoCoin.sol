@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract VolcanoCoin is ERC20("Volcano Coin", "VLC"), Ownable{
 
-  uint256  constant initialSupply = 10000;
+  uint256 constant initialSupply = 10000;
 
   struct Payment{
     uint amount;
