@@ -81,11 +81,11 @@ contract VolcanoCoin is ERC20("VolcanoCoin", "VLC"), Ownable {
     uint _paymentId, 
     PaymentType _newPaymentType, 
     bytes32 _newComment
-  ) public view {
+  ) public {
     Payment[] memory userPayments = payments[msg.sender];
     require(userPayments.length > 0, "No payments to update.");
 
-    for (uint i=0; i < userPayments; i++) {
+    for (uint i=0; i < userPayments.length; i++) {
       Payment memory currPayment = userPayments[i];
       if (currPayment.identifier == _paymentId) {
         currPayment.paymentType = _newPaymentType;
@@ -96,6 +96,7 @@ contract VolcanoCoin is ERC20("VolcanoCoin", "VLC"), Ownable {
       }
     }
   }
+
 
 
   // 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
