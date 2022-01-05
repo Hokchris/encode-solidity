@@ -7,10 +7,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract VolcanoCoin is ERC20("VolcanoCoin", "VLC"), Ownable {
     
   uint private tokenSupply = 10000;
-  uint private currentId = 1;
-  
+  uint private currentId = 0;
+  address private adminAddress = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+
   event SupplyChange(uint _newSupply);
-  mapping(address => Payment[]) public payments;
+  mapping(address => Payment[]) public payments; 
+//   address[] private paymentAddresses;
 
   enum PaymentType{UNKNOWN, BASIC, REFUND, DIVIDEND, GROUP}  
 
@@ -23,6 +25,12 @@ contract VolcanoCoin is ERC20("VolcanoCoin", "VLC"), Ownable {
     string comment;
   }
   
+  modifier onlyAdmin {
+    if (msg.sender == adminAddress) {
+        _;
+    }
+  }
+
   constructor() {
     _mint(msg.sender, tokenSupply);
   }
@@ -78,26 +86,46 @@ contract VolcanoCoin is ERC20("VolcanoCoin", "VLC"), Ownable {
     PaymentType _newPaymentType, 
     string memory _newComment
   ) public {
-    Payment[] memory userPayments = payments[msg.sender];
-    require(userPayments.length > 0, "No payments to update.");
+    require(currentId > _paymentId, "Invalid payment ID.");
+    require((uint(_newPaymentType) >= 0) && (uint(_newPaymentType) < 5),  
+      "Wrong payment type range, please choose value between 0 and 4.");  // enum values cast to integers when inputting
 
-    for (uint i=0; i < userPayments.length; i++) {
-      Payment memory currPayment = userPayments[i];
-      if (currPayment.identifier == _paymentId) {
-        payments[msg.sender][i].paymentType = _newPaymentType;
-        payments[msg.sender][i].comment = _newComment;
+    // for (uint i=0; i < userPayments.length; i++) {
+    //   Payment memory currPayment = userPayments[i];
+    //   if (currPayment.identifier == _paymentId) {
+    //     payments[msg.sender][i].paymentType = _newPaymentType;
+    //     payments[msg.sender][i].comment = _newComment;
 
-        emit PaymentUpdated(payments[msg.sender][i]);
-        break;
-      }
-    }
+    //     emit PaymentUpdated(payments[msg.sender][i]);
+    //     break;
+    //   }
+    // }
+
+    payments[msg.sender][_paymentId].paymentType = _newPaymentType;
+    payments[msg.sender][_paymentId].comment = _newComment;
+
+    emit PaymentUpdated(payments[msg.sender][_paymentId]);
   }
 
-  
+  event Test(Payment payment);
+  function adminUpdatePayment(
+      address _userAddress,
+      uint _paymentId,
+      PaymentType _newPaymentType
+  ) public onlyAdmin {
 
-  // 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
+    require(currentId > _paymentId, "Invalid payment ID.");
+    require((uint(_newPaymentType) >= 0) && (uint(_newPaymentType) < 5),  
+        "Wrong payment type range, please choose value between 0 and 4.");
 
-  // 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
-  // 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db
+    payments[_userAddress][_paymentId].paymentType = _newPaymentType;
+    payments[_userAddress][_paymentId].comment = string(
+        abi.encodePacked(
+            payments[_userAddress][_paymentId].comment, 
+            " updated by 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4"
+        )
+    );
+
+  }
 
 }
