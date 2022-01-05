@@ -20,7 +20,7 @@ contract VolcanoCoin is ERC20("VolcanoCoin", "VLC"), Ownable {
     uint identifier;
     uint256 timestamp;
     PaymentType paymentType;
-    bytes32 comment;
+    string comment;
   }
   
   constructor() {
@@ -57,10 +57,6 @@ contract VolcanoCoin is ERC20("VolcanoCoin", "VLC"), Ownable {
 
   }
   
-//   function getPayments(address _address) public view returns(Payment[] memory) {
-//     return payments[_address];
-//   }
-
   function viewPaymentDetails() public view returns (Payment[] memory) {
     return payments[msg.sender];
   }
@@ -80,7 +76,7 @@ contract VolcanoCoin is ERC20("VolcanoCoin", "VLC"), Ownable {
   function updatePayment(
     uint _paymentId, 
     PaymentType _newPaymentType, 
-    bytes32 _newComment
+    string memory _newComment
   ) public {
     Payment[] memory userPayments = payments[msg.sender];
     require(userPayments.length > 0, "No payments to update.");
@@ -88,16 +84,16 @@ contract VolcanoCoin is ERC20("VolcanoCoin", "VLC"), Ownable {
     for (uint i=0; i < userPayments.length; i++) {
       Payment memory currPayment = userPayments[i];
       if (currPayment.identifier == _paymentId) {
-        currPayment.paymentType = _newPaymentType;
-        currPayment.comment = _newComment;
+        payments[msg.sender][i].paymentType = _newPaymentType;
+        payments[msg.sender][i].comment = _newComment;
 
-        emit PaymentUpdated(currPayment);
+        emit PaymentUpdated(payments[msg.sender][i]);
         break;
       }
     }
   }
 
-
+  
 
   // 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
 
