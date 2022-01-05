@@ -12,7 +12,6 @@ contract VolcanoCoin is ERC20("VolcanoCoin", "VLC"), Ownable {
 
   event SupplyChange(uint _newSupply);
   mapping(address => Payment[]) public payments; 
-//   address[] private paymentAddresses;
 
   enum PaymentType{UNKNOWN, BASIC, REFUND, DIVIDEND, GROUP}  
 
@@ -70,8 +69,8 @@ contract VolcanoCoin is ERC20("VolcanoCoin", "VLC"), Ownable {
   }
 
   event SinglePayment(Payment payment);
-  function viewPaymentDetailsReadable() public {
-    Payment[] memory allPayments = payments[msg.sender];
+  function viewPaymentDetailsReadable(address _userAddress) public {
+    Payment[] memory allPayments = payments[_userAddress];
     
     require(allPayments.length > 0, "No payments to show.");
     for (uint i=0; i < allPayments.length; i++) {
@@ -89,17 +88,6 @@ contract VolcanoCoin is ERC20("VolcanoCoin", "VLC"), Ownable {
     require(currentId > _paymentId, "Invalid payment ID.");
     require((uint(_newPaymentType) >= 0) && (uint(_newPaymentType) < 5),  
       "Wrong payment type range, please choose value between 0 and 4.");  // enum values cast to integers when inputting
-
-    // for (uint i=0; i < userPayments.length; i++) {
-    //   Payment memory currPayment = userPayments[i];
-    //   if (currPayment.identifier == _paymentId) {
-    //     payments[msg.sender][i].paymentType = _newPaymentType;
-    //     payments[msg.sender][i].comment = _newComment;
-
-    //     emit PaymentUpdated(payments[msg.sender][i]);
-    //     break;
-    //   }
-    // }
 
     payments[msg.sender][_paymentId].paymentType = _newPaymentType;
     payments[msg.sender][_paymentId].comment = _newComment;
