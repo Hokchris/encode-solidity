@@ -76,6 +76,28 @@ contract VolcanoCoin is ERC20("VolcanoCoin", "VLC"), Ownable {
     }
   }
 
+  event PaymentUpdated(Payment updated);
+  function updatePayment(
+    uint _paymentId, 
+    PaymentType _newPaymentType, 
+    bytes32 _newComment
+  ) public view {
+    Payment[] memory userPayments = payments[msg.sender];
+    require(userPayments.length > 0, "No payments to update.");
+
+    for (uint i=0; i < userPayments; i++) {
+      Payment memory currPayment = userPayments[i];
+      if (currPayment.identifier == _paymentId) {
+        currPayment.paymentType = _newPaymentType;
+        currPayment.comment = _newComment;
+
+        emit PaymentUpdated(currPayment);
+        break;
+      }
+    }
+  }
+
+
   // 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
 
   // 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
