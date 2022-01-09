@@ -2,18 +2,18 @@
 pragma solidity ^0.8.0;
 
 // import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts-upgradeable//token/ERC20/ERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-contract VolcanoCoin is ERC20Upgradeable, Ownable, UUPSUpgradeable {
+contract VolcanoCoinUpgradeable is ERC20Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
     
   uint private tokenSupply = 10000;
   uint private currentId = 0;
-  uint public versionNumber = 1;
+  uint public CONTRACT_VERSION = 1;
   address private adminAddress = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
-  bool initialized = false;
+  bool public initialized = false;
 
 
   event SupplyChange(uint _newSupply);
@@ -36,18 +36,18 @@ contract VolcanoCoin is ERC20Upgradeable, Ownable, UUPSUpgradeable {
     }
   }
 
-  function initialize() initializer public {
+  function initialize(string memory name, string memory symbol) public initializer  {
     require(!initialized, "Contract already initialized");
     initialized = true;
-    __ERC20_init("Volcano Coin", "VLC");
+    __ERC20_init(name, symbol);
     _mint(msg.sender, tokenSupply);
   }
   
-  function addToSupply(uint _amount) public onlyOwner {
-    _mint(msg.sender, _amount);
-    tokenSupply += _amount;
-    emit SupplyChange(tokenSupply);
-  }
+  // function addToSupply(uint _amount) public onlyOwner {
+  //   _mint(msg.sender, _amount);
+  //   tokenSupply += _amount;
+  //   emit SupplyChange(tokenSupply);
+  // }
   
   function getSupply() public view returns(uint) {
     return tokenSupply;

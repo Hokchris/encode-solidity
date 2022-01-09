@@ -8,7 +8,7 @@ const {
 const { solidity } = require("ethereum-waffle");
 use(solidity);
 
-describe("VolcanoCoin", () => {
+describe("VolcanoCoinUpgradeable", () => {
   let volcanoContract;
   let owner, addr1, addr2, addr3;
 
