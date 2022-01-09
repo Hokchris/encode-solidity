@@ -1,5 +1,5 @@
 const { expect, use } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers, upgrades } = require("hardhat");
 const {
   constants, // Common constants, like the zero address and largest integers
   expectRevert, // Assertions for transactions that should fail
@@ -9,12 +9,14 @@ const { solidity } = require("ethereum-waffle");
 use(solidity);
 
 describe("VolcanoCoin", () => {
+  let VolcanoContract;
   let volcanoContract;
   let owner, addr1, addr2, addr3;
 
   beforeEach(async () => {
-    const Volcano = await ethers.getContractFactory("VolcanoCoin");
-    volcanoContract = await Volcano.deploy();
+    VolcanoContract = await ethers.getContractFactory("VolcanoCoin");
+    volcanoContract = await upgrades.deployProxy(VolcanoContract, []);
+
     await volcanoContract.deployed();
     [owner, addr1, addr2, addr3] = await ethers.getSigners();
   });

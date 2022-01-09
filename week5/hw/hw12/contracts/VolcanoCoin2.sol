@@ -5,11 +5,13 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-contract VolcanoCoin is ERC20Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
-  uint256 public constant CONTRACT_VERSION = 1;
+contract VolcanoCoin2 is ERC20Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
+
+  uint256 public constant CONTRACT_VERSION = 2;
   uint256 private currentId;
   address private adminAddress;
   bool private initialized;
+
 
   event SupplyChange(uint _newSupply);
   mapping(address => Payment[]) public payments; 
@@ -34,7 +36,7 @@ contract VolcanoCoin is ERC20Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
   function initialize() public initializer  {
     require(!initialized, "Contract already initialized");
     initialized = true;
-    __ERC20_init("VolcanoCoin", "VLC");
+    __ERC20_init("VolcanoCoin2", "VLC");
     __Ownable_init();
     __UUPSUpgradeable_init();
     _mint(msg.sender, 10000);
