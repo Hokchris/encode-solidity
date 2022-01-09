@@ -23,12 +23,26 @@ describe("VolcanoCoin", () => {
 
   it("has a name", async () => {
     let contractName = await volcanoContract.name();
-    console.log("NAME IS ", contractName);
     expect(contractName).to.be.equal("VolcanoCoin");
   });
 
   it("has a version number", async () => {
     let versionNumber = await volcanoContract.CONTRACT_VERSION();
     expect(versionNumber).to.be.equal("1");
+  });
+
+  it("upgrades", async () => {
+    const VolcanoCoin = await ethers.getContractFactory("VolcanoCoin");
+    const volcanoCoin = await upgrades.deployProxy(VolcanoCoin, []);
+    let ver1 = await volcanoCoin.CONTRACT_VERSION();
+    expect(ver1).to.be.equal("1");
+
+    const VolcanoCoin2 = await ethers.getContractFactory("VolcanoCoin2");
+    const volcanoCoin2 = await upgrades.upgradeProxy(
+      volcanoCoin.address,
+      VolcanoCoin2
+    );
+    let ver2 = await volcanoCoin2.CONTRACT_VERSION();
+    expect(ver2).to.be.equal("2");
   });
 });
