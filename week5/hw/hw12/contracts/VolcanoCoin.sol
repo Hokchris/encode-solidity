@@ -4,16 +4,17 @@ pragma solidity ^0.8.0;
 // import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+// import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+// import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
-contract VolcanoCoinUpgradeable is ERC20Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
-    
-  uint private tokenSupply = 10000;
-  uint private currentId = 0;
-  uint public CONTRACT_VERSION = 1;
-  address private adminAddress = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
-  bool public initialized = false;
+contract VolcanoCoin is ERC20Upgradeable, OwnableUpgradeable, UUPSUpgradeable {
+  // using CountersUpgradeable for CountersUpgradeable.Counter; 
+
+  uint256 public constant CONTRACT_VERSION = 1;
+  uint256 private currentId;
+  address private adminAddress;
+  bool private initialized;
 
 
   event SupplyChange(uint _newSupply);
@@ -24,7 +25,7 @@ contract VolcanoCoinUpgradeable is ERC20Upgradeable, OwnableUpgradeable, UUPSUpg
   struct Payment {
     uint amount;
     address recipientAddress;
-    uint identifier;
+    uint256 identifier;
     uint256 timestamp;
     PaymentType paymentType;
     string comment;
@@ -36,22 +37,27 @@ contract VolcanoCoinUpgradeable is ERC20Upgradeable, OwnableUpgradeable, UUPSUpg
     }
   }
 
-  function initialize(string memory name, string memory symbol) public initializer  {
+  function initialize() public initializer  {
     require(!initialized, "Contract already initialized");
     initialized = true;
-    __ERC20_init(name, symbol);
-    _mint(msg.sender, tokenSupply);
+    __ERC20_init("VolcanoCoin", "VLC");
+    __Ownable_init();
+    __UUPSUpgradeable_init();
+    _mint(msg.sender, 10000);
+    adminAddress = msg.sender;
   }
   
+  function _authorizeUpgrade(address _newImplementation) onlyOwner internal override {}
+
   // function addToSupply(uint _amount) public onlyOwner {
   //   _mint(msg.sender, _amount);
   //   tokenSupply += _amount;
   //   emit SupplyChange(tokenSupply);
   // }
   
-  function getSupply() public view returns(uint) {
-    return tokenSupply;
-  }
+  // function getSupply() public view returns(uint) {
+  //   return tokenSupply;
+  // }
   
   function makeTransfer(address _sender, address _receiver, uint _amount) public {
     require(msg.sender == _sender);
@@ -70,7 +76,6 @@ contract VolcanoCoinUpgradeable is ERC20Upgradeable, OwnableUpgradeable, UUPSUpg
     
     currentId++;
     payments[msg.sender].push(_rec); 
-
   }
   
   function viewPaymentDetails() public view returns (Payment[] memory) {

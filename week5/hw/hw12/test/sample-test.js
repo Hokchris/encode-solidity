@@ -8,24 +8,9 @@ const {
 const { solidity } = require("ethereum-waffle");
 use(solidity);
 
-describe("VolcanoCoinUpgradeable", () => {
+describe("VolcanoCoin", () => {
   let volcanoContract;
   let owner, addr1, addr2, addr3;
-
-  // it("Should return the new greeting once it's changed", async function () {
-  //   const Greeter = await ethers.getContractFactory("Greeter");
-  //   const greeter = await Greeter.deploy("Hello, world!");
-  //   await greeter.deployed();
-
-  //   expect(await greeter.greet()).to.equal("Hello, world!");
-
-  //   const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
-
-  //   // wait until the transaction is mined
-  //   await setGreetingTx.wait();
-
-  //   expect(await greeter.greet()).to.equal("Hola, mundo!");
-  // });
 
   beforeEach(async () => {
     const Volcano = await ethers.getContractFactory("VolcanoCoin");
@@ -36,11 +21,12 @@ describe("VolcanoCoinUpgradeable", () => {
 
   it("has a name", async () => {
     let contractName = await volcanoContract.name();
+    console.log("NAME IS ", contractName);
     expect(contractName).to.be.equal("VolcanoCoin");
   });
 
   it("has a version number", async () => {
-    let versionNumber = await volcanoContract.versionNumber();
+    let versionNumber = await volcanoContract.CONTRACT_VERSION();
     expect(versionNumber).to.be.equal("1");
   });
 });
