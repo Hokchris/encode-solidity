@@ -10,10 +10,10 @@ contract DeFi {
   ISwapRouter public immutable swapRouter;
 
   constructor() {
-    swapRouter = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
+    swapRouter = ISwapRouter(address(0xE592427A0AEce92De3Edee1F18E0157C05861564));
   }
 
-  function swapDAItoUSDC(uint256 amountIn) public returns(uint256 amountOut) {
+  function swapDAItoUSDC(uint256 amountIn) external returns(uint256 amountOut) {
 
     ISwapRouter.ExactInputSingleParams memory params = 
     ISwapRouter.ExactInputSingleParams({
