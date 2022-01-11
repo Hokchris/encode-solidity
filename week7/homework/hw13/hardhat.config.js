@@ -11,22 +11,6 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
-
-// module.exports = {
-//   defaultNetwork: 'ganache',
-//   networks: {
-//     ganache: {
-//       // change URL to the URL from your Ganache. See README if the port is not 8545.
-//       url: 'http://127.0.0.1:8545',
-//       gasLimit: 6000000000,
-//       defaultBalanceEther: 1000,
-//     },
-//   },
-//   solidity: '0.8.0',
-// };
-
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */

@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const { expect, use } = require("chai");
 const { ethers } = require("hardhat");
 
@@ -20,42 +18,10 @@ describe("DeFi", () => {
   before(async function () {
     [owner, addr1, addr2, addr3, addr4, addr5] = await ethers.getSigners();
 
-    // steps taken from https://stackoverflow.com/questions/67942401/how-to-connect-ethers-js-library-with-rinkeby-programmatically
-    const provider = new ethers.providers.InfuraProvider(
-      "rinkeby",
-      process.env.INFURA_API_KEY
-    );
-
-    const wallet = new ethers.Wallet(
-      "0x009a50b30b820d2567ebe89cde62b46922a692bdfde30473ca68bb8cab00ee8e",
-      provider
-    );
-
-    const signer = wallet.connect(provider);
-
-    // console.log(provider);
-    // console.log(wallet);
-    // console.log(signer);
-
-    // ethers.getSigner not recognised as function?
-    // const whale = await ethers.getSigner(
-    //   "0x503828976D22510aad0201ac7EC88293211D23Da"
-    // );
-
-    // const test = await ethers.provider.getSigner(
-    //   0x503828976d22510aad0201ac7ec88293211d23da
-    // );
-
-    // const b = await test.getBalance();
+    // didn't work when running on terminal on own PC but worked with gitpod (??)
+    const whale = await ethers.getSigner(unlockedAddress);
 
     console.log("owner account is ", owner.address);
-
-    console.log(addr5);
-
-    const bal = owner.getBalance();
-
-    const ownerBalance = await owner.getBalance();
-    console.log("FUNDS: ", ethers.utils.formatEther(ownerBalance));
 
     DAI_TokenContract = await ethers.getContractAt("ERC20", DAIAddress);
     USDC_TokenContract = await ethers.getContractAt("ERC20", USDCAddress);
@@ -63,15 +29,12 @@ describe("DeFi", () => {
     console.log("SYMBOL: ", symbol);
 
     const DeFi = await ethers.getContractFactory("DeFi");
-    await DAI_TokenContract.transfer(owner.address, BigInt(TRANSFER_QUANTITY), {
-      from: unlockedAddress,
-      gasPrice: 0,
-    });
+    await DAI_TokenContract.connect(whale).transfer(
+      owner.address,
+      BigInt(TRANSFER_QUANTITY)
+    );
 
-    DeFi_Instance = await DeFi.deployed();
-
-    const ownerBalance2 = await owner.getbalance();
-    console.log("FUNDS: ", ethers.utils.formatEther(ownerBalance2));
+    DeFi_Instance = await DeFi.deploy();
   });
 
   it("should check transfer succeeded", async () => {});
