@@ -37,7 +37,7 @@ describe("DeFi", () => {
     const DeFi = await ethers.getContractFactory("DeFi");
     await DAI_TokenContract.connect(whale).transfer(
       owner.address,
-      BigInt(INITIAL_AMOUNT * 2)
+      BigInt(INITIAL_AMOUNT * 5)
     );
 
     DeFi_Instance = await DeFi.deploy();
@@ -113,28 +113,53 @@ describe("DeFi", () => {
     // console.log("DEFI DAI: ", await DAI_TokenContract.balanceOf(DeFi_Instance.address));
     // console.log("DEFI AAVE: ", await AAVE_TokenContract.balanceOf(DeFi_Instance.address))
 
-    let sendDAI = await DAI_TokenContract.transfer(
+    let sendDAI = await DAI_TokenContract.connect(owner).transfer(
       DeFi_Instance.address,
-      INITIAL_AMOUNT,
-      {
-        from: owner.address,
-      }
+      INITIAL_AMOUNT
     );
     await sendDAI.wait();
 
-    // let swapDAItoAAVE = await DeFi_Instance.swapTokens(
-    //   DAIAddress,
-    //   AAVEAddress,
-    //   INITIAL_AMOUNT,
-    //   {
-    //     from: owner.address,
-    //   }
-    // );
-    // await swapDAItoAAVE.wait();
+    let swapDAItoAAVE = await DeFi_Instance.connect(owner).swapTokens(
+      DAI_TokenContract.address,
+      AAVE_TokenContract.address,
+      INITIAL_AMOUNT
+    );
+    await swapDAItoAAVE.wait();
 
     let aaveBalance2 = await AAVE_TokenContract.balanceOf(owner.address);
-    // console.log(aaveBalance1);
-    // console.log(aaveBalance2);
+    console.log(aaveBalance1);
+    console.log(aaveBalance2);
     expect(aaveBalance2 - aaveBalance1).to.be.above(0);
+  });
+
+  it("should swap DAI to UNI", async () => {
+    let uniBalance1 = await UNI_TokenContract.balanceOf(owner.address);
+    let daiBalance1 = await DAI_TokenContract.balanceOf(owner.address);
+    // console.log("AAVE before: ", aaveBalance1.toNumber());
+    // console.log("DAI OWNER: ", daiOwner.toNumber());
+
+    // console.log("OWNER DAI: ", daiBalance1);
+    // console.log("OWNER AAVE: ", aaveBalance1);
+
+    // console.log("DEFI DAI: ", await DAI_TokenContract.balanceOf(DeFi_Instance.address));
+    // console.log("DEFI AAVE: ", await AAVE_TokenContract.balanceOf(DeFi_Instance.address))
+
+    let sendDAI = await DAI_TokenContract.connect(owner).transfer(
+      DeFi_Instance.address,
+      INITIAL_AMOUNT
+    );
+    await sendDAI.wait();
+
+    let swapDAItoUNI = await DeFi_Instance.connect(owner).swapTokens(
+      DAI_TokenContract.address,
+      UNI_TokenContract.address,
+      INITIAL_AMOUNT
+    );
+    await swapDAItoUNI.wait();
+
+    let uniBalance2 = await UNI_TokenContract.balanceOf(owner.address);
+    console.log(uniBalance1);
+    console.log(uniBalance2);
+    expect(uniBalance2 - uniBalance1).to.be.above(0);
   });
 });
