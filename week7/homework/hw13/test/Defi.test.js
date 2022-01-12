@@ -45,16 +45,9 @@ describe("DeFi", () => {
 
   it("should check transfer succeeded", async () => {
     let daiBalance = await DAI_TokenContract.balanceOf(owner.address);
-    // let daiBalanceCoinbase = await DAI_TokenContract.balanceOf(unlockedAddress);
-
-    // console.log("DeFi contract DAI balance: ", ethers.utils.formatUnits(daiBalance, 18));
-    // console.log("Coinbase contract DAI balance: ", ethers.utils.formatUnits(daiBalanceCoinbase, 18));
-
     expect(daiBalance > 0);
   });
   it("should sendDAI to contract", async () => {
-    // let daiBalanceBefore = await DAI_TokenContract.balanceOf(owner.address);
-
     await DAI_TokenContract.transfer(
       DeFi_Instance.address,
       BigInt(INITIAL_AMOUNT),
@@ -65,54 +58,20 @@ describe("DeFi", () => {
     );
 
     const daiBalance = await DAI_TokenContract.balanceOf(DeFi_Instance.address);
-
     expect(daiBalance.toNumber() > 0);
-    /**
-    let daiBalanceAfter = await DAI_TokenContract.balanceOf(owner.address);
-
-    console.log("Before: ", ethers.utils.formatUnits(daiBalanceBefore, 18));
-    console.log("After: ", ethers.utils.formatUnits(daiBalanceAfter, 18));
-    
-    let diff =  daiBalanceBefore - daiBalanceAfter;
-    
-    console.log(INITIAL_AMOUNT, " -> ", diff);
-
-    expect(diff == INITIAL_AMOUNT);
-    */
   });
   it("should make a swap", async () => {
-    // let usdcBalance = await USDC_TokenContract.balanceOf(owner.address);
-    // let daiBalance = await DAI_TokenContract.balanceOf(DeFi_Instance.address);
-
-    // console.log("USDC: ", usdcBalance);
-    // console.log("DAI: ", daiBalance);
-
     await DeFi_Instance.swapDAItoUSDC(9999999990000, {
       from: owner.address,
       gasPrice: 0,
     });
 
-    let usdcBalance2 = await USDC_TokenContract.balanceOf(owner.address);
-    // let daiBalance2 = await DAI_TokenContract.balanceOf(DeFi_Instance.address);
-
-    // console.log("USDC: ", usdcBalance2);
-    // console.log("DAI: ", daiBalance2);
-
-    expect(usdcBalance2.toNumber() > 0);
+    let usdcBalance = await USDC_TokenContract.balanceOf(owner.address);
+    expect(usdcBalance.toNumber() > 0);
   });
 
   it("should swap DAI to AAVE", async () => {
-    let aaveBalance1 = await AAVE_TokenContract.balanceOf(owner.address);
-    let daiBalance1 = await DAI_TokenContract.balanceOf(owner.address);
-    // console.log("AAVE before: ", aaveBalance1.toNumber());
-    // console.log("DAI OWNER: ", daiOwner.toNumber());
-
-    // console.log("OWNER DAI: ", daiBalance1);
-    // console.log("OWNER AAVE: ", aaveBalance1);
-
-    // console.log("DEFI DAI: ", await DAI_TokenContract.balanceOf(DeFi_Instance.address));
-    // console.log("DEFI AAVE: ", await AAVE_TokenContract.balanceOf(DeFi_Instance.address))
-
+    const aaveBalanceBefore = await AAVE_TokenContract.balanceOf(owner.address);
     let sendDAI = await DAI_TokenContract.connect(owner).transfer(
       DeFi_Instance.address,
       INITIAL_AMOUNT
@@ -126,24 +85,12 @@ describe("DeFi", () => {
     );
     await swapDAItoAAVE.wait();
 
-    let aaveBalance2 = await AAVE_TokenContract.balanceOf(owner.address);
-    console.log(aaveBalance1);
-    console.log(aaveBalance2);
-    expect(aaveBalance2 - aaveBalance1).to.be.above(0);
+    let aaveBalanceAfter = await AAVE_TokenContract.balanceOf(owner.address);
+    expect(aaveBalanceAfter - aaveBalanceBefore).to.be.above(0);
   });
 
   it("should swap DAI to UNI", async () => {
-    let uniBalance1 = await UNI_TokenContract.balanceOf(owner.address);
-    let daiBalance1 = await DAI_TokenContract.balanceOf(owner.address);
-    // console.log("AAVE before: ", aaveBalance1.toNumber());
-    // console.log("DAI OWNER: ", daiOwner.toNumber());
-
-    // console.log("OWNER DAI: ", daiBalance1);
-    // console.log("OWNER AAVE: ", aaveBalance1);
-
-    // console.log("DEFI DAI: ", await DAI_TokenContract.balanceOf(DeFi_Instance.address));
-    // console.log("DEFI AAVE: ", await AAVE_TokenContract.balanceOf(DeFi_Instance.address))
-
+    let uniBalanceBefore = await UNI_TokenContract.balanceOf(owner.address);
     let sendDAI = await DAI_TokenContract.connect(owner).transfer(
       DeFi_Instance.address,
       INITIAL_AMOUNT
@@ -157,9 +104,7 @@ describe("DeFi", () => {
     );
     await swapDAItoUNI.wait();
 
-    let uniBalance2 = await UNI_TokenContract.balanceOf(owner.address);
-    console.log(uniBalance1);
-    console.log(uniBalance2);
-    expect(uniBalance2 - uniBalance1).to.be.above(0);
+    let uniBalanceAfter = await UNI_TokenContract.balanceOf(owner.address);
+    expect(uniBalanceAfter - uniBalanceBefore).to.be.above(0);
   });
 });
