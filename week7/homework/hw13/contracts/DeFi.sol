@@ -32,4 +32,24 @@ contract DeFi {
 
   }
 
+  function swapTokens(address _inputToken, address _outputToken, uint256 _amountIn) 
+    external 
+    returns (uint256 amountOut) {
+
+    ISwapRouter.ExactInputSingleParams memory params = 
+      ISwapRouter.ExactInputSingleParams({
+        tokenIn: _inputToken,
+        tokenOut: _outputToken,
+        fee: 3000,
+        recipient: msg.sender,
+        deadline: block.timestamp,
+        amountIn: _amountIn,
+        amountOutMinimum: 0,
+        sqrtPriceLimitX96: 0
+    });
+
+    TransferHelper.safeApprove(_inputToken, address(swapRouter), _amountIn);
+    amountOut = swapRouter.exactInputSingle(params);
+
+  }
 }
